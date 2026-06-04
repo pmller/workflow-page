@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 // Why these settings:
 // - base: './'  -> all asset URLs are relative, so the built site works no
 //   matter what path/host it's served from (Laravel Herd, file://, a sub-path).
@@ -12,7 +14,7 @@ import tailwindcss from '@tailwindcss/vite'
 //   SVG is inline), so we simply turn it off.
 export default defineConfig({
   base: './',
-  plugins: [tailwindcss()],
+  plugins: [tailwindcss(), cloudflare()],
   publicDir: false,
   build: {
     outDir: 'public',
