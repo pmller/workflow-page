@@ -1,0 +1,8 @@
+node_modules
+public
+dist
+.DS_Store
+*.local
+.vite
+.mulch/
+.claude/

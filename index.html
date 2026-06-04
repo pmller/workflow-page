@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="How a multi-agent coding workflow actually works: Solo orchestrates, Claude Code executes, Mulch remembers. This site was built with it." />
+    <meta name="color-scheme" content="dark" />
+    <title>Solo · Claude Code · Mulch — one agent can't hold it all</title>
+
+    <!-- Fonts: Space Grotesk (display) · Inter (body) · JetBrains Mono (commands) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet" />
+  </head>
+
+  <body>
+    <!-- Scroll-progress baton track (width driven by JS) -->
+    <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progress-bar"></div></div>
+
+    <a href="#top" class="skip-link">Skip to content</a>
+
+    <!-- =====================================================================
+         0 · HERO
+         ===================================================================== -->
+    <header class="section relative overflow-hidden pt-16 md:pt-24" id="top">
+      <div class="mx-auto max-w-6xl px-6">
+        <!-- brand line -->
+        <div class="reveal mb-12 flex items-center justify-between gap-4 text-sm">
+          <span class="font-mono font-medium tracking-tight text-muted">
+            <a href="https://soloterm.com/" target="_blank" rel="noopener" class="text-purple transition-opacity hover:opacity-80">Solo</a> ×
+            <a href="https://claude.com/claude-code" target="_blank" rel="noopener" class="text-coral transition-opacity hover:opacity-80">Claude&nbsp;Code</a> ×
+            <a href="https://github.com/jayminwest/mulch" target="_blank" rel="noopener" class="text-green transition-opacity hover:opacity-80">Mulch</a>
+          </span>
+          <a href="https://github.com/jayminwest/mulch" target="_blank" rel="noopener"
+             class="font-mono text-xs text-muted underline decoration-line underline-offset-4 transition-colors hover:text-cyan">
+            github.com/jayminwest/mulch ↗
+          </a>
+        </div>
+
+        <div class="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+          <div>
+            <p class="eyebrow reveal mb-5">A multi-agent coding workflow</p>
+            <h1 class="reveal text-balance text-5xl font-bold sm:text-6xl lg:text-7xl" style="--reveal-delay:80ms">
+              One agent can't<br />hold it all.<br />
+              <span class="text-gradient">So we stopped<br />asking it to.</span>
+            </h1>
+            <p class="reveal mt-7 max-w-xl text-lg text-muted" style="--reveal-delay:200ms">
+              A workflow built on three honest tools —
+              <strong class="font-semibold text-ink">Solo</strong> to orchestrate,
+              <strong class="font-semibold text-ink">Claude&nbsp;Code</strong> to build,
+              <strong class="font-semibold text-ink">Mulch</strong> to remember. Here's how it
+              actually works. <em class="text-cyan not-italic">(This site was built with it.)</em>
+            </p>
+            <div class="reveal mt-8 flex flex-wrap items-center gap-3" style="--reveal-delay:320ms">
+              <span class="chip">solo&nbsp;orchestrates</span>
+              <span class="chip chip-coral">claude&nbsp;code&nbsp;executes</span>
+              <span class="chip chip-green">mulch&nbsp;remembers</span>
+            </div>
+          </div>
+
+          <!-- the whole cast on one stage -->
+          <div class="reveal scene rounded-3xl" style="--reveal-delay:160ms" id="scene-hero"></div>
+        </div>
+
+        <!-- scroll cue -->
+        <div class="reveal mt-16 flex items-center gap-3 text-muted" style="--reveal-delay:420ms">
+          <span class="font-mono text-xs uppercase tracking-[0.18em]">Scroll to see the loop</span>
+          <span class="inline-block h-9 w-5 rounded-full border border-line">
+            <span class="mx-auto mt-1.5 block h-2 w-1 animate-bounce rounded-full bg-cyan"></span>
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ===================================================================
+           1 · THE PROBLEM
+           =================================================================== -->
+      <section class="section" id="problem" aria-labelledby="problem-h">
+        <div class="mx-auto grid max-w-6xl items-center gap-12 px-6 md:grid-cols-2">
+          <div class="reveal">
+            <p class="eyebrow mb-4">01 — The problem</p>
+            <h2 id="problem-h" class="text-4xl sm:text-5xl">
+              The longer an agent works,<br /><span class="text-coral">the worse it gets.</span>
+            </h2>
+            <p class="mt-6 max-w-lg text-lg text-muted">
+              Pile every file, every decision, and every dead end into one context window and quality
+              erodes — stale assumptions stick, attention thins, and yesterday's hard-won insight is
+              gone by tomorrow. Bigger prompts don't fix this. <strong class="font-semibold text-ink">Better
+              structure does.</strong>
+            </p>
+          </div>
+          <div class="reveal scene md:order-first" id="scene-problem"></div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           2 · MEET THE CAST
+           =================================================================== -->
+      <section class="section" aria-labelledby="cast-h">
+        <div class="mx-auto max-w-6xl px-6">
+          <div class="reveal mx-auto max-w-2xl text-center">
+            <p class="eyebrow mb-4">02 — Meet the cast</p>
+            <h2 id="cast-h" class="text-4xl sm:text-5xl">Three tools, one job each.</h2>
+            <p class="mt-5 text-lg text-muted">
+              Clean separation of concerns, all the way down. No tool reaches into another's lane.
+            </p>
+          </div>
+
+          <div class="mt-14 grid gap-6 md:grid-cols-3">
+            <!-- Conductor / Solo -->
+            <article class="reveal panel flex flex-col p-7" style="--reveal-delay:0ms">
+              <div class="scene mx-auto h-44" id="scene-cast-conductor"></div>
+              <div class="mt-4">
+                <p class="font-mono text-xs uppercase tracking-[0.16em] text-purple">orchestrates</p>
+                <h3 class="mt-1 text-2xl text-ink">Solo</h3>
+                <p class="mt-3 text-muted">
+                  The conductor. An MCP server that lets one Claude <strong class="text-ink">plan and
+                  delegate but never touch a file.</strong> It writes the brief and keeps everyone in time.
+                </p>
+              </div>
+            </article>
+
+            <!-- Worker / Claude Code -->
+            <article class="reveal panel flex flex-col p-7" style="--reveal-delay:120ms">
+              <div class="scene mx-auto flex h-44 items-end justify-center" id="scene-cast-worker"></div>
+              <div class="mt-4">
+                <p class="font-mono text-xs uppercase tracking-[0.16em] text-coral">executes</p>
+                <h3 class="mt-1 text-2xl text-ink">Claude&nbsp;Code</h3>
+                <p class="mt-3 text-muted">
+                  The workers. Each task runs as a <strong class="text-ink">fresh Claude&nbsp;Code agent</strong>
+                  that reads and writes the actual code — carries one ticket, then powers down.
+                </p>
+              </div>
+            </article>
+
+            <!-- Mulch -->
+            <article class="reveal panel flex flex-col p-7" style="--reveal-delay:240ms">
+              <div class="scene mx-auto flex h-44 items-end justify-center" id="scene-cast-mulch"></div>
+              <div class="mt-4">
+                <p class="font-mono text-xs uppercase tracking-[0.16em] text-green">remembers</p>
+                <h3 class="mt-1 text-2xl text-ink">Mulch</h3>
+                <p class="mt-3 text-muted">
+                  The memory. A <strong class="text-ink">git-tracked store of expertise</strong> the workers
+                  read before they start and write to when they finish. A CLI — no server, no LLM.
+                </p>
+              </div>
+            </article>
+          </div>
+
+          <p class="reveal mt-10 text-center font-mono text-sm text-muted">
+            <span class="text-purple">Solo coordinates</span> ·
+            <span class="text-coral">Claude&nbsp;Code executes</span> ·
+            <span class="text-green">Mulch remembers</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           3 · THE WORKFLOW LOOP
+           =================================================================== -->
+      <section class="section" aria-labelledby="loop-h">
+        <div class="mx-auto max-w-6xl px-6">
+          <div class="reveal mx-auto max-w-2xl text-center">
+            <p class="eyebrow mb-4">03 — The workflow loop</p>
+            <h2 id="loop-h" class="text-4xl sm:text-5xl">Four phases. A fresh worker for each.</h2>
+            <p class="mt-5 text-lg text-muted">
+              Every task runs the same loop: research the ground truth, plan the approach, implement it,
+              then hand it to an independent QA worker. No phase inherits another's baggage —
+              <strong class="font-semibold text-ink">each starts clean with exactly the context it needs.</strong>
+            </p>
+          </div>
+          <div class="reveal scene mt-12" id="scene-loop"></div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           4 · HOW IT ACTUALLY WORKS
+           =================================================================== -->
+      <section class="section" aria-labelledby="orch-h">
+        <div class="mx-auto grid max-w-6xl items-center gap-12 px-6 md:grid-cols-2">
+          <div class="reveal">
+            <p class="eyebrow mb-4">04 — How it actually works</p>
+            <h2 id="orch-h" class="text-4xl sm:text-5xl">The orchestrator<br />stays at altitude.</h2>
+            <p class="mt-6 max-w-lg text-lg text-muted">
+              Solo's orchestrator never edits code. It writes the brief into a
+              <span class="chip">to&#8209;do</span>, keeps shared context in a
+              <span class="chip">scratchpad</span>,
+              <span class="chip">spawns</span> a fresh agent to do the work, then sleeps on an
+              <span class="chip">idle&nbsp;timer</span> until that agent reports back — no busy-waiting.
+            </p>
+            <p class="mt-4 max-w-lg text-lg text-muted">
+              <strong class="font-semibold text-ink">One agent, one task, never recycled</strong>, so no
+              stale context bias leaks across the build.
+            </p>
+          </div>
+          <div class="reveal scene" id="scene-orchestration"></div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           5 · MEMORY THAT COMPOUNDS
+           =================================================================== -->
+      <section class="section" aria-labelledby="mulch-h">
+        <div class="mx-auto grid max-w-6xl items-center gap-12 px-6 md:grid-cols-2">
+          <div class="reveal scene md:order-last" id="scene-mulch"></div>
+          <div class="reveal">
+            <p class="eyebrow mb-4">05 — Memory that compounds</p>
+            <h2 id="mulch-h" class="text-4xl sm:text-5xl">Workers that learn —<br /><span class="text-green">and don't forget.</span></h2>
+            <p class="mt-6 max-w-lg text-lg text-muted">
+              Before a worker starts, <span class="chip chip-green">ml prime</span> and
+              <span class="chip chip-green">ml search</span> pull the expertise relevant to the task.
+              When it finishes, it calls <span class="chip chip-green">ml record</span> to write down what
+              it learned — a convention, a pattern, a failure to avoid. It all lives in git, so the next
+              agent (and your teammates) start smarter.
+            </p>
+            <p class="mt-4 max-w-lg text-lg text-muted">
+              <strong class="font-semibold text-ink">Recording alone is a junk drawer</strong>; priming on
+              the way in is what turns it into expertise that's actually used.
+            </p>
+            <ul class="mt-6 flex flex-wrap gap-2 text-sm">
+              <li class="chip chip-green">convention</li>
+              <li class="chip chip-green">pattern</li>
+              <li class="chip chip-green">failure</li>
+              <li class="chip chip-green">decision</li>
+              <li class="chip chip-green">reference</li>
+              <li class="chip chip-green">guide</li>
+            </ul>
+            <p class="mt-4 text-sm text-muted">
+              Tiers <span class="font-mono text-ink">foundational / tactical / observational</span> govern
+              shelf-life; <span class="font-mono text-ink">ml search</span> ranks with BM25 and
+              <span class="font-mono text-ink">ml rank</span> floats proven expertise up by how often it's
+              been confirmed. Append-only JSONL, git-merged without conflicts.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           6 · WHY IT'S BETTER
+           =================================================================== -->
+      <section class="section" aria-labelledby="benefits-h">
+        <div class="mx-auto max-w-6xl px-6">
+          <div class="reveal mx-auto max-w-2xl text-center">
+            <p class="eyebrow mb-4">06 — Why it's better</p>
+            <h2 id="benefits-h" class="text-4xl sm:text-5xl">Smaller context, sharper output.</h2>
+          </div>
+          <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <article class="reveal panel p-6" style="--reveal-delay:0ms">
+              <div class="scene mx-auto h-28" id="benefit-focus"></div>
+              <h3 class="mt-4 text-xl text-ink">Tight context</h3>
+              <p class="mt-2 text-sm text-muted">Scoped tasks keep every agent's window small and on-point.</p>
+            </article>
+            <article class="reveal panel p-6" style="--reveal-delay:100ms">
+              <div class="scene mx-auto h-28" id="benefit-parallel"></div>
+              <h3 class="mt-4 text-xl text-ink">Parallel work</h3>
+              <p class="mt-2 text-sm text-muted">Independent tasks run side by side instead of in one queue.</p>
+            </article>
+            <article class="reveal panel p-6" style="--reveal-delay:200ms">
+              <div class="scene mx-auto h-28" id="benefit-compound"></div>
+              <h3 class="mt-4 text-xl text-ink">Compounding expertise</h3>
+              <p class="mt-2 text-sm text-muted">Learnings accrue in Mulch instead of evaporating between sessions.</p>
+            </article>
+            <article class="reveal panel p-6" style="--reveal-delay:300ms">
+              <div class="scene mx-auto h-28" id="benefit-repeat"></div>
+              <h3 class="mt-4 text-xl text-ink">Repeatable</h3>
+              <p class="mt-2 text-sm text-muted">A coordinator that only coordinates can run the loop again without drifting.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           7 · HOW QUALITY STAYS HIGH
+           =================================================================== -->
+      <section class="section" aria-labelledby="quality-h">
+        <div class="mx-auto grid max-w-6xl items-center gap-12 px-6 md:grid-cols-2">
+          <div class="reveal">
+            <p class="eyebrow mb-4">07 — How quality stays high</p>
+            <h2 id="quality-h" class="text-4xl sm:text-5xl">Quality isn't a vibe.<br /><span class="text-cyan">It's the pipeline.</span></h2>
+            <p class="mt-6 max-w-lg text-lg text-muted">
+              An <strong class="font-semibold text-ink">independent QA worker</strong> checks the build with
+              fresh eyes — it never wrote the code it's reviewing. Bugs get
+              <strong class="font-semibold text-ink">root-caused before they're fixed</strong>, not patched
+              blind. And every fix that sticks gets recorded, so the same mistake doesn't come back.
+            </p>
+            <p class="mt-4 max-w-lg text-lg text-muted">
+              Quality is a property of the process, not a final polish.
+            </p>
+          </div>
+          <div class="reveal scene" id="scene-quality"></div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           8 · THE META PAYOFF
+           =================================================================== -->
+      <section class="section" aria-labelledby="meta-h">
+        <div class="mx-auto grid max-w-6xl items-center gap-12 px-6 md:grid-cols-2">
+          <div class="reveal scene md:order-last" id="scene-meta"></div>
+          <div class="reveal">
+            <p class="eyebrow mb-4">08 — The proof</p>
+            <h2 id="meta-h" class="text-4xl sm:text-5xl">We didn't just describe it.<br /><span class="text-gradient">We shipped this with it.</span></h2>
+            <p class="mt-6 max-w-lg text-lg text-muted">
+              This page was researched, planned, built, and QA'd by exactly the loop above: an orchestrator
+              dispatching fresh Solo agents, each one a Claude&nbsp;Code instance, learnings recorded in
+              Mulch. <strong class="font-semibold text-ink">The proof is the thing you're reading.</strong>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================================================================
+         9 · CTA / FOOTER
+         =================================================================== -->
+    <footer class="section pb-20" aria-labelledby="cta-h">
+      <div class="mx-auto max-w-6xl px-6">
+        <div class="reveal panel overflow-hidden p-8 sm:p-12">
+          <div class="grid items-center gap-8 md:grid-cols-[1.1fr_0.9fr]">
+            <div>
+              <p class="eyebrow mb-4">09 — Try the loop</p>
+              <h2 id="cta-h" class="text-4xl sm:text-5xl">Try the loop.</h2>
+              <p class="mt-5 max-w-lg text-lg text-muted">
+                Mulch is open source. Solo orchestrates your Claude&nbsp;Code agents. Spin up an
+                orchestrator, give it one task, and let the workers do the rest.
+              </p>
+              <div class="mt-7 flex flex-wrap items-center gap-3">
+                <a href="https://soloterm.com/" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-2 rounded-xl border border-purple/60 bg-purple/15 px-4 py-2.5 font-semibold text-purple transition-transform hover:-translate-y-0.5 hover:bg-purple/25">
+                  Solo ↗
+                </a>
+                <a href="https://claude.com/claude-code" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-2 rounded-xl border border-coral/60 bg-coral/15 px-4 py-2.5 font-semibold text-coral transition-transform hover:-translate-y-0.5 hover:bg-coral/25">
+                  Claude&nbsp;Code ↗
+                </a>
+                <a href="https://github.com/jayminwest/mulch" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-2 rounded-xl bg-green px-4 py-2.5 font-semibold text-base transition-transform hover:-translate-y-0.5">
+                  Mulch&nbsp;on&nbsp;GitHub ↗
+                </a>
+              </div>
+              <p class="mt-4 font-mono text-xs text-muted">
+                <span class="chip chip-green">npx&nbsp;@os-eco/mulch-cli</span>
+              </p>
+            </div>
+            <div class="scene" id="scene-footer"></div>
+          </div>
+        </div>
+
+        <p class="reveal mt-8 text-center font-mono text-xs text-muted">
+          Built with the workflow it describes — Solo · Claude&nbsp;Code · Mulch.
+          Facts verified against <a href="https://github.com/jayminwest/mulch" target="_blank" rel="noopener" class="text-cyan underline underline-offset-4">jayminwest/mulch</a>.
+        </p>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

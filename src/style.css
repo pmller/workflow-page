@@ -1,0 +1,455 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   DESIGN TOKENS  (Tailwind v4 @theme — generates bg- / text- / border- utils)
+   Source of truth: research findings, to-do 268 #307 (warm-dark + saturated).
+   ========================================================================== */
+@theme {
+  --color-base: #1a1726;       /* near-black, warm canvas               */
+  --color-base-2: #15121f;     /* deeper pocket for layered depth        */
+  --color-surface: #272138;    /* cards / raised panels                  */
+  --color-surface-2: #322a47;  /* hover / inner panels                   */
+  --color-line: #3b3357;       /* hairline borders                       */
+
+  --color-purple: #7c5cfc;     /* Conductor / Solo — orchestration       */
+  --color-coral: #ff6b6b;      /* Workers / Claude Code — execution      */
+  --color-amber: #ffc93c;      /* tickets / attention                    */
+  --color-green: #3dd68c;      /* Mulch — memory that grows              */
+  --color-cyan: #34d1f0;       /* links / QA                             */
+
+  --color-ink: #f5f3ff;        /* high-contrast text                     */
+  --color-muted: #a99fc4;      /* secondary text                         */
+
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --shadow-pop: 0 18px 50px -12px rgb(0 0 0 / 0.6);
+}
+
+/* ============================================================================
+   BASE
+   ========================================================================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-base);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+    /* Atmosphere: a soft radial of orchestration-purple + mulch-green glow
+       behind a near-black canvas, so the saturated cast pops off the page. */
+    background-image:
+      radial-gradient(60rem 60rem at 12% -10%, rgb(124 92 252 / 0.18), transparent 60%),
+      radial-gradient(48rem 48rem at 100% 8%, rgb(61 214 140 / 0.12), transparent 55%),
+      radial-gradient(60rem 60rem at 50% 120%, rgb(255 107 107 / 0.10), transparent 60%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: var(--color-purple);
+    color: var(--color-ink);
+  }
+
+  /* Visible, on-brand focus rings for keyboard users. */
+  :focus-visible {
+    outline: 3px solid var(--color-cyan);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  a { color: inherit; }
+}
+
+/* Fine dot-grid texture layered above the canvas — gives the "workshop floor"
+   a tangible surface without an image asset. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgb(245 243 255 / 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+}
+
+/* ============================================================================
+   COMPONENT-ish utilities (kept small; layout lives in HTML utilities)
+   ========================================================================== */
+
+/* Mono command chips — e.g. `ml prime`, `ml record`. */
+.chip {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 0.15em 0.5em;
+  border-radius: 0.45rem;
+  background: rgb(124 92 252 / 0.14);
+  border: 1px solid rgb(124 92 252 / 0.35);
+  color: #cdbcff;
+}
+.chip-green { background: rgb(61 214 140 / 0.13); border-color: rgb(61 214 140 / 0.4); color: #9af0c6; }
+.chip-coral { background: rgb(255 107 107 / 0.13); border-color: rgb(255 107 107 / 0.4); color: #ffb3b3; }
+.chip-cyan  { background: rgb(52 209 240 / 0.13); border-color: rgb(52 209 240 / 0.4); color: #a6ecf9; }
+
+/* Keyboard skip-link: off-screen until focused. */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 60;
+  border-radius: 0.6rem;
+  background: var(--color-purple);
+  color: var(--color-ink);
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Eyebrow / section index label. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Section shell. Generous vertical rhythm; content sits above the texture. */
+.section {
+  position: relative;
+  z-index: 1;
+  padding-block: clamp(5rem, 12vh, 9rem);
+}
+
+/* Card surface used by cast cards / tiles. */
+.panel {
+  background: linear-gradient(180deg, var(--color-surface), var(--color-base-2));
+  border: 1px solid var(--color-line);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-pop);
+}
+
+/* Workflow-loop (section 3): a single row on desktop, a 2×2 grid on very narrow
+   screens so each worker stays large and legible. The travelling relay marker is
+   row-only; the 2×2 layout drops it (the phases still light up via fx-seq). */
+.loop-narrow { display: none; }
+@media (max-width: 479px) {
+  .loop-wide { display: none; }
+  .loop-narrow {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem 1.25rem;
+    max-width: 21rem;
+    margin-inline: auto;
+  }
+}
+
+/* Gradient text for hero / key phrases. */
+.text-gradient {
+  background: linear-gradient(100deg, var(--color-coral), var(--color-amber) 45%, var(--color-green) 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ============================================================================
+   SCROLL-REVEAL  (toggled by IntersectionObserver -> .is-in)
+   ========================================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px) scale(0.985);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: transform, opacity;
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Top scroll-progress baton track. */
+.progress-track {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  z-index: 50;
+  background: rgb(255 255 255 / 0.04);
+}
+.progress-bar {
+  height: 100%;
+  width: var(--scroll, 0%);
+  background: linear-gradient(90deg, var(--color-purple), var(--color-coral), var(--color-amber), var(--color-green), var(--color-cyan));
+  box-shadow: 0 0 16px rgb(124 92 252 / 0.6);
+}
+
+/* ============================================================================
+   THE CAST — idle "alive" loops + signature micro-interactions.
+   All transform/opacity only (GPU-cheap). Animation classes live on inner
+   SVG groups authored in cast.js.
+   ========================================================================== */
+
+/* Gentle full-body bob/breathe so the stage feels populated when still. */
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.025); }
+}
+.anim-bob     { animation: bob 3.6s ease-in-out infinite; }
+.anim-bob-2   { animation: bob 3.6s ease-in-out infinite; animation-delay: -1.2s; }
+.anim-bob-3   { animation: bob 3.6s ease-in-out infinite; animation-delay: -2.4s; }
+.anim-breathe { animation: breathe 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+
+/* Conductor baton tap — keeps time. */
+@keyframes baton-tap {
+  0%, 100% { transform: rotate(-14deg); }
+  50%      { transform: rotate(16deg); }
+}
+.anim-baton {
+  transform-box: fill-box;
+  transform-origin: left bottom; /* the baton group's bbox bottom-left ≈ shoulder */
+  animation: baton-tap 1.5s ease-in-out infinite;
+}
+
+/* Worker waving goodbye (footer). */
+@keyframes wave {
+  0%, 100% { transform: rotate(0); }
+  50%      { transform: rotate(-22deg); }
+}
+.anim-wave {
+  transform-box: fill-box;
+  animation: wave 1.3s ease-in-out infinite;
+}
+
+/* Conductor "thinking / idle-timer" Zzz drift while it waits on an agent. */
+@keyframes zzz {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.7); }
+  30%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(10px, -22px) scale(1.1); }
+}
+.anim-zzz   { transform-box: fill-box; animation: zzz 2.8s ease-in-out infinite; }
+.anim-zzz-2 { transform-box: fill-box; animation: zzz 2.8s ease-in-out infinite; animation-delay: 0.9s; }
+.anim-zzz-3 { transform-box: fill-box; animation: zzz 2.8s ease-in-out infinite; animation-delay: 1.8s; }
+
+/* Worker "typing / sparks" while it does its one task. */
+@keyframes spark {
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50%      { opacity: 1; transform: scale(1.25); }
+}
+.anim-spark   { transform-box: fill-box; transform-origin: center; animation: spark 0.9s ease-in-out infinite; }
+.anim-spark-2 { transform-box: fill-box; transform-origin: center; animation: spark 0.9s ease-in-out infinite; animation-delay: 0.3s; }
+.anim-spark-3 { transform-box: fill-box; transform-origin: center; animation: spark 0.9s ease-in-out infinite; animation-delay: 0.6s; }
+
+/* Mulch bin: leaves sway; the sprout breathes — "expertise, alive". */
+@keyframes sway {
+  0%, 100% { transform: rotate(-4deg); }
+  50%      { transform: rotate(5deg); }
+}
+.anim-sway   { transform-box: fill-box; transform-origin: bottom center; animation: sway 4.5s ease-in-out infinite; }
+.anim-sway-2 { transform-box: fill-box; transform-origin: bottom center; animation: sway 4.5s ease-in-out infinite; animation-delay: -1.5s; }
+
+/* --- SIGNATURE MICRO-INTERACTIONS: play once the scene enters the viewport.
+   The scene root gets .is-in; children below run their keyframes then hold. */
+
+/* Worker spawn-pop (orchestration scene). */
+@keyframes spawn-pop {
+  0%   { opacity: 0; transform: translateY(8px) scale(0.2); }
+  60%  { opacity: 1; transform: translateY(0) scale(1.12); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.scene.is-in .fx-spawn {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: spawn-pop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Worker power-down/fade after handing back its ticket (= never recycled). */
+@keyframes power-down {
+  0%   { opacity: 1; transform: scale(1); }
+  70%  { opacity: 1; }
+  100% { opacity: 0.25; transform: scale(0.9) translateY(6px); filter: saturate(0.3); }
+}
+.scene.is-in .fx-powerdown {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: power-down 1.1s ease-in 2.4s both;
+}
+
+/* Ticket hand-off — slides from clipboard to worker. */
+@keyframes handoff {
+  0%   { opacity: 0; transform: translateX(-34px) translateY(-6px) rotate(-12deg); }
+  100% { opacity: 1; transform: translateX(0) translateY(0) rotate(0); }
+}
+.scene.is-in .fx-handoff {
+  transform-box: fill-box;
+  animation: handoff 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.9s both;
+}
+
+/* Mulch lid bounce on deposit. */
+@keyframes lid-bounce {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  30%      { transform: translateY(-10px) rotate(-9deg); }
+  60%      { transform: translateY(-3px) rotate(-3deg); }
+}
+.scene.is-in .fx-lid {
+  transform-box: fill-box;
+  transform-origin: right center;
+  animation: lid-bounce 1.1s ease-out 1.1s both;
+}
+
+/* Mulch sprout grows one notch as a record lands. */
+@keyframes sprout-grow {
+  0%   { transform: scaleY(0.35); opacity: 0.4; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+.scene.is-in .fx-sprout {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: sprout-grow 1s cubic-bezier(0.34, 1.56, 0.64, 1) 1.4s both;
+}
+
+/* Prime: a glowing card is pulled UP and out of the bin before work. */
+@keyframes prime-pull {
+  0%   { opacity: 0; transform: translateY(16px) scale(0.7); }
+  100% { opacity: 1; transform: translateY(-6px) scale(1); }
+}
+.scene.is-in .fx-prime {
+  transform-box: fill-box;
+  animation: prime-pull 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+
+/* Record: a leaf-note drops DOWN into the bin after work. */
+@keyframes record-drop {
+  0%   { opacity: 0; transform: translateY(-30px) rotate(-18deg); }
+  70%  { opacity: 1; }
+  100% { opacity: 1; transform: translateY(2px) rotate(4deg); }
+}
+.scene.is-in .fx-record {
+  transform-box: fill-box;
+  animation: record-drop 1s ease-in 1.2s both;
+}
+
+/* QA stamp — a ✅ thumps down onto the reviewed work. */
+@keyframes stamp {
+  0%   { opacity: 0; transform: scale(2.4) rotate(-12deg); }
+  60%  { opacity: 1; transform: scale(0.92) rotate(-12deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-12deg); }
+}
+.scene.is-in .fx-stamp {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: stamp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s both;
+}
+
+/* Workflow loop — each worker lights up in sequence as the section reveals. */
+@keyframes light-up {
+  0%   { opacity: 0.4; filter: saturate(0.4) brightness(0.8); transform: translateY(4px); }
+  100% { opacity: 1; filter: none; transform: none; }
+}
+.scene.is-in .fx-seq {
+  animation: light-up 0.6s ease-out both;
+}
+.scene.is-in .fx-seq-1 { animation-delay: 0.2s; }
+.scene.is-in .fx-seq-2 { animation-delay: 0.7s; }
+.scene.is-in .fx-seq-3 { animation-delay: 1.2s; }
+.scene.is-in .fx-seq-4 { animation-delay: 1.7s; }
+
+/* The relay marker travels left→right along the loop track (research→QA).
+   Distance is provided per-scene via the --relay-dist custom property. */
+@keyframes relay-x {
+  0%   { opacity: 0; transform: translateX(0); }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(var(--relay-dist, 300px)); }
+}
+.scene.is-in .fx-relay {
+  animation: relay-x 2.4s ease-in-out 0.5s both;
+}
+
+/* Glitch flash on the overloaded robot (the Problem). */
+@keyframes glitch {
+  0%, 92%, 100% { opacity: 0; transform: translateX(0); }
+  93%  { opacity: 0.9; transform: translateX(-3px); }
+  95%  { opacity: 0.5; transform: translateX(3px); }
+  97%  { opacity: 0.9; transform: translateX(-2px); }
+}
+.anim-glitch { transform-box: fill-box; animation: glitch 3.5s steps(1) infinite; }
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-2deg); }
+  50%      { transform: rotate(2deg); }
+}
+.anim-wobble   { transform-box: fill-box; transform-origin: bottom center; animation: wobble 2.2s ease-in-out infinite; }
+.anim-wobble-2 { transform-box: fill-box; transform-origin: bottom center; animation: wobble 2.6s ease-in-out infinite; animation-delay: -0.7s; }
+
+/* Wilting plant droop loop (Problem). */
+@keyframes wilt {
+  0%, 100% { transform: rotate(0); }
+  50%      { transform: rotate(8deg); }
+}
+.anim-wilt { transform-box: fill-box; transform-origin: bottom center; animation: wilt 5s ease-in-out infinite; }
+
+/* Soft pulsing glow used behind primed cards / active nodes. */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.85; }
+}
+.anim-glow { transform-box: fill-box; transform-origin: center; animation: glow-pulse 2.6s ease-in-out infinite; }
+
+/* Hero parallax drift for the whole stage. */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+.anim-float { animation: float-slow 7s ease-in-out infinite; }
+
+/* ============================================================================
+   REDUCED MOTION — drop loops, scrub & spring; keep a simple fade-in.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  .reveal {
+    transition: opacity 0.4s ease;
+    transform: none;
+  }
+
+  /* Kill every decorative/cast animation. */
+  .anim-bob, .anim-bob-2, .anim-bob-3, .anim-breathe, .anim-baton, .anim-wave,
+  .anim-zzz, .anim-zzz-2, .anim-zzz-3, .anim-spark, .anim-spark-2, .anim-spark-3,
+  .anim-sway, .anim-sway-2, .anim-glitch, .anim-wobble, .anim-wobble-2,
+  .anim-wilt, .anim-glow, .anim-float,
+  .scene.is-in .fx-spawn, .scene.is-in .fx-powerdown, .scene.is-in .fx-handoff,
+  .scene.is-in .fx-lid, .scene.is-in .fx-sprout, .scene.is-in .fx-prime,
+  .scene.is-in .fx-record, .scene.is-in .fx-stamp, .scene.is-in .fx-seq,
+  .scene.is-in .fx-relay {
+    animation: none !important;
+  }
+
+  /* Ensure anything that animated to a visible end-state stays visible. */
+  .fx-spawn, .fx-handoff, .fx-prime, .fx-record, .fx-sprout, .fx-stamp,
+  .fx-seq, .fx-lid, .fx-powerdown { opacity: 1 !important; }
+  .fx-relay { opacity: 0 !important; } /* the travelling marker just hides */
+}
